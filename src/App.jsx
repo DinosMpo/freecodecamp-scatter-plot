@@ -1,34 +1,132 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useState, useEffect } from 'react'
 import './App.css'
+import * as d3 from 'd3'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [myData, setMyData] = useState("");
+  const [load, setLoad] = useState(false);
+  const w = 1300;
+  const h = 600;
+  const padding = 60;
+
+  useEffect(() => {
+    fetch("https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/master/cyclist-data.json")
+      .then(res => res.json())
+      .then(data => setMyData(data))
+      .then(load => setLoad(true));
+  }, [0]);
+
+  useEffect(() => {
+    if (load) {
+      const container = d3.select("#chart")
+        .append("div")
+        .attr("id", "container");
+
+
+      const minYear = d3.min(myData, (d) => d.Year);
+      console.log("minYear ", minYear);
+      const maxYear = d3.max(myData, (d) => d.Year);
+      console.log("maxYear ", maxYear);
+      const maxTime = d3.max(myData, (d) => d.Seconds);
+      console.log("maxTime ", maxTime);
+      const minTime = d3.min(myData, (d) => d.Seconds);
+
+      const xScale = d3.scaleLinear()
+        .domain([minYear - 1, maxYear])
+        .range([padding, w - padding]);
+
+      const yScale = d3.scaleLinear()
+        .domain([maxTime, minTime])
+        .range([h - padding, padding]);
+
+      const xAxis = d3.axisBottom(xScale);
+      xAxis.tickFormat((d) => d);
+      // const timeFormat = d3.timeFormat('%M:%S');
+      const yAxis = d3.axisLeft(yScale).tickFormat((d) => {
+        const minutes = Math.floor(d / 60);
+        const seconds = Math.floor(d - (minutes * 60));
+        return `${minutes}:${seconds < 9 ? "0" + seconds : seconds}`;
+      });
+
+      const handleMouseOver = (e, d) => {
+        console.log(e);
+        container
+          .style("left", e.pageX + 10 + "px")
+          .style("top", e.pageY - 30 + "px")
+          .style("display", "block")
+          .html(() => {
+            return '<div id="tooltip" data-year=' + d.Year + '>' + '<div> Name: ' + d.Name + '</div>' +
+              '<div> Year: ' + d.Year + ', Time: ' + d.Time + '</div>' +
+              '<div>' + (d.Doping ? d.Doping : '') + '</div></div>';
+          });
+      };
+
+      const handleMouseOut = (e, d) => {
+        container
+          .style("display", "none");
+      }
+
+      const svg = d3.select("#chart")
+        .append("svg")
+        .attr("width", w)
+        .attr("height", h)
+        .attr("id", "mySvg");
+
+      svg.append("g")
+        .attr("transform", "translate(0, " + (h - padding) + ")")
+        .attr("id", "x-axis")
+        .call(xAxis);
+
+      svg.append("g")
+        .attr("transform", "translate(" + padding + ", 0)")
+        .attr("id", "y-axis")
+        .call(yAxis);
+
+      svg.selectAll("circle")
+        .data(myData)
+        .enter()
+        .append('circle')
+        .attr("class", "dot")
+        .attr("data-xvalue", (d) => d.Year)
+        .attr("data-yvalue", (d) => {
+          let date = new Date();
+          let minutes = Math.floor(d.Seconds / 60);
+          let seconds = d.Seconds - (minutes * 60);
+          date.setMinutes(minutes);
+          date.setMilliseconds(seconds);
+          return date;
+        })
+        .attr("cx", (d, i) => xScale(d.Year))
+        .attr("cy", (d, i) => yScale(d.Seconds))
+        .attr("r", 7)
+        .attr("stroke", "black")
+        .attr("fill", (d) => {
+          return d.Doping ? "red" : "blue"
+        })
+        .on("mouseover", (e, d) => handleMouseOver(e, d))
+        .on("mouseout", (e, d) => handleMouseOut(e, d));
+
+      // svg.selectAll("rect")
+      //   .data(myData)
+      //   .enter()
+      //   .append("rect")
+      //   .attr("x", (d) => xScale(d.Year))
+      //   .attr("y", (d) => yScale(d.Seconds))
+      //   .attr("width", 5)
+      //   .attr("height", (d) => d.Seconds)
+    }
+
+  }, [load]);
+
+  // console.log(myData)
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div id="App">
+      <h1 id="title">Scatter Plot</h1>
+      <div id="chart">
+
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    </div>
   )
 }
 
