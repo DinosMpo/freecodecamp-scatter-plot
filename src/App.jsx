@@ -17,7 +17,7 @@ function App() {
           let minutes = data.Time.substring(0, 2);
           let seconds = data.Time.substring(3, 5);
           let newDate = new Date(2025, 3, 1, 0, minutes, seconds);
-          return {...data, Time: newDate}
+          return { ...data, Time: newDate }
         });
         setMyData(newData);
       })
@@ -135,9 +135,15 @@ function App() {
   return (
     <div id="App">
       <h1 id="title">Scatter Plot</h1>
-      <div id="chart">
+      <div id="chart"></div>
 
+      <div id="legend-container">
+        <legend id="legend">
+          <div id="allegations">Riders with doping allegations <div id="red-color"></div></div>
+          <div id="no-allegations">No doping allegations<div id="blue-color"></div></div>
+        </legend>
       </div>
+
     </div>
   )
 }

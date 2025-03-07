@@ -46,3 +46,49 @@
   flex-direction: column;
   gap: 5px;
 }
+
+#legend-container {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+#legend {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  border: 1px solid black;
+  border-radius: 15px;
+  padding: 10px;
+  box-sizing: border-box;
+  box-shadow: 5px 5px 5px;
+  width: 500px;
+}
+
+#allegations {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+}
+
+#no-allegations {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+
+}
+
+#red-color {
+  background-color: red;
+  width: 15px;
+  height: 15px;
+}
+
+#blue-color {
+  background-color: blue;
+  width: 15px;
+  height: 15px;
+}
