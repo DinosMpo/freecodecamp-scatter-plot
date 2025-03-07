@@ -113,6 +113,7 @@ function App() {
           <div id="no-allegations">No doping allegations<div id="blue-color"></div></div>
         </legend>
       </div>
+      <div>Created by <a href="https://github.com/DinosMpo/freecodecamp-scatter-plot" target="_blank" rel="noreferrer">DinosMpo</a></div>
     </div>
   )
 }
