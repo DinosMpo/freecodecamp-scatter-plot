@@ -31,20 +31,9 @@ function App() {
         .attr("id", "container");
 
       const minYear = d3.min(myData, (d) => d.Year);
-      console.log("minYear ", minYear);
       const maxYear = d3.max(myData, (d) => d.Year);
-      console.log("maxYear ", maxYear);
       const maxTime = d3.max(myData, (d) => d.Seconds);
-      console.log("maxTime ", maxTime);
       const minTime = d3.min(myData, (d) => d.Seconds);
-
-      // const dates = myData.map((data) => {
-      //   let minutes = data.Time.substring(0, 2);
-      //   let seconds = data.Time.substring(3, 5);
-      //   let newDate = new Date(2025, 3, 1, 0, minutes, seconds);
-      //   // console.log(newDate)
-      //   return newDate;
-      // });
 
       const xScale = d3.scaleLinear()
         .domain([minYear - 1, maxYear])
@@ -54,17 +43,12 @@ function App() {
         .domain(d3.extent(myData, (d) => d.Time))
         .range([h - padding, padding]);
 
-      // const yScale = d3.scaleTime()
-      //   .domain([maxTime, minTime])
-      //   .range([h - padding, padding]);
-
       const xAxis = d3.axisBottom(xScale);
       xAxis.tickFormat((d) => d);
       const timeFormat = d3.timeFormat('%M:%S');
       const yAxis = d3.axisLeft(yScale).tickFormat(timeFormat);
 
       const handleMouseOver = (e, d) => {
-        console.log(e);
         container
           .style("left", e.pageX + 10 + "px")
           .style("top", e.pageY - 30 + "px")
@@ -114,36 +98,21 @@ function App() {
         .on("mouseover", (e, d) => handleMouseOver(e, d))
         .on("mouseout", (e, d) => handleMouseOut(e, d));
 
-      // svg.selectAll("rect")
-      //   .data(myData)
-      //   .enter()
-      //   .append("rect")
-      //   .attr("x", (d) => xScale(d.Year))
-      //   .attr("y", (d) => yScale(d.Seconds))
-      //   .attr("width", 5)
-      //   .attr("height", (d) => d.Seconds)
       const axis = document.querySelector('#y-axis');
-
-      // console.log(axis);
-      console.log(axis.querySelectorAll('.tick'));
     }
 
   }, [load]);
-
-  console.log(myData)
 
   return (
     <div id="App">
       <h1 id="title">Scatter Plot</h1>
       <div id="chart"></div>
-
       <div id="legend-container">
         <legend id="legend">
           <div id="allegations">Riders with doping allegations <div id="red-color"></div></div>
           <div id="no-allegations">No doping allegations<div id="blue-color"></div></div>
         </legend>
       </div>
-
     </div>
   )
 }
